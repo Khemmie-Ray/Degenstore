@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract DegenStore is ERC20, Ownable {
 
-error NotEnoughDegen(string);
+error NotEnoughDegen(string, uint);
 
 enum RedeemItems { Guns, Extralive, Vehicle, Drone }
 
@@ -17,14 +17,14 @@ function mint(address to, uint256 amount) public onlyOwner {
 
 function TransferDegen(address to, uint256 amount) external returns(bool success){
     if(amount < balanceOf(msg.sender)){
-        revert NotEnoughDegen("Degen Token not enough");
+        revert NotEnoughDegen("Degen Token not enough", amount);
     }
   success = transfer(to, amount);
 }
 
 function burn(uint256 amount) external {
     if(amount < balanceOf(msg.sender)){
-        revert NotEnoughDegen("Degen Token not enough");
+        revert NotEnoughDegen("Degen Token not enough", amount);
     }
     _burn(msg.sender, amount);
 }
@@ -32,19 +32,19 @@ function burn(uint256 amount) external {
 function redeemItems(RedeemItems item) external {
     uint256 price = 0;
      if (item == RedeemItems.Guns) {
-        price = 10;
+        price = 10 *1e18;
     } else if (item == RedeemItems.Extralive) {
-        price = 8;
+        price = 8 *1e18;
     } else if (item == RedeemItems.Vehicle) {
-        price = 6;
+        price = 6 *1e18;
     } else if (item == RedeemItems.Drone) {
-        price = 4;
+        price = 4 *1e18;
     }else{
         price = 0;
     }
 
-    if(price < balanceOf(msg.sender)){
-        revert NotEnoughDegen("Degen Token not enough");
+    if(price > balanceOf(msg.sender)){
+        revert NotEnoughDegen("Degen Token not enough", price);
     }
     _transfer(msg.sender, address(this), price);
 }

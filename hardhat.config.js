@@ -46,6 +46,6 @@ module.exports = {
     }
   },
   etherscan: {
-    apiKey: "YOUR API KEY",
+    apiKey: "snowtrace",
   },
 }
